@@ -1,0 +1,21 @@
+.Cookpit {
+    text-align: center;
+    width: 450px;
+    margin: 40px auto;
+  }
+  
+  .Cookpit button {
+    background-color: green;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .Cookpit button:hover {
+    background-color: aquamarine;
+    color: #000;
+  }
+  
+  .Cookpit button.Red {
+    background-color: red;
+  }
+  

@@ -1,14 +1,21 @@
 import React, { Component } from 'react'
-import Person from '../components/Persons/Person'
+import withClass from '../hoc/withClass'
+import Cookpit from '../components/Cockpit/Cockpit'
+import Persons from '../components/Persons/Persons'
+import classes from './App.module.css'
+import Aux from '../hoc/Aux'
+import AuthContext from '../context/auth-context'
 
-export default class App extends Component {
+class App extends Component {
   state = {
     persons: [
       { id: '1', name: 'Max', age: 28 },
       { id: '2', name: 'Manu', age: 29 },
       { id: '3', name: 'bob', age: 26 }
     ],
-    showPersons: true
+    showPersons: false,
+    changeCounter: 0,
+    authenticated: false
   }
 
   nameChangeHandler = (event, id) => {
@@ -22,8 +29,11 @@ export default class App extends Component {
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
-    this.setState({
-      persons
+    this.setState((prevState, props) => {
+      return {
+        persons,
+        changeCounter: prevState.changeCounter + 1
+      }
     })
   }
 
@@ -33,26 +43,52 @@ export default class App extends Component {
     })
   }
 
+  deletePersonHandler = (id) => {
+    const personIndex = this.state.persons.findIndex(p => p.id === id);
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({
+      persons
+    })
+  }
+
+  loginHandler = () => {
+    this.setState({
+      authenticated: true
+    })
+  }
+
   render() {
     let persons = null;
     if (this.state.showPersons) {
-       persons = this.state.persons.map((p, index) => {
-        return (
-          <Person key={p.id}
-            name={p.name}
-            age={p.age}
-            changed={event => this.nameChangeHandler(event, p.id)}
+      persons = (
+        <div>
+          <Persons
+            persons={this.state.persons}
+            clicked={this.deletePersonHandler}
+            changed={this.nameChangeHandler}
+            isAuthenticated={this.state.authenticated}
           />
-        )
-      })
+        </div>
+      );
     };
     return (
-      <div className="App">
-        <h1>Hi, I'm a React App</h1>
-        <p>This is really working!</p>
-        <button onClick={this.togglePerson}>Toggle Persons</button>
-        {persons}
-      </div>
+      <Aux>
+        <AuthContext.Provider
+          value={{
+            authenticated: this.state.authenticated,
+            login: this.loginHandler
+          }}>
+          <Cookpit
+            persons={this.state.persons}
+            showPersons={this.state.showPersons}
+            clicked={this.togglePerson}
+          />
+          {persons}
+        </AuthContext.Provider>
+      </Aux>
     )
   }
 }
+
+export default withClass(App, classes.App);

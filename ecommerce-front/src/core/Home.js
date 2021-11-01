@@ -11,6 +11,7 @@ const Home = () => {
     const loadProductsBySell = () => {
         getProducts('sold').then(data => {
             console.log(data);
+            if(!data) return;
             if (data.error) {
                 setError(data.error);
             } else {
@@ -40,13 +41,13 @@ const Home = () => {
             className="container">
             <h2 className="mb-4">New Arrivals</h2>
             <div className="row">
-                {productsByArrival && productsByArrival.map((product, i) => (
+                {productsByArrival.map((product, i) => (
                     <Card key={i} product={product} />
                 ))}
             </div>
             <h2>Best Sellers</h2>
             <div className="row">
-                {productsBySell && productsBySell.map((product, i) => (
+                {productsBySell.map((product, i) => (
                     <Card key={i} product={product} />
                 ))}
             </div>
